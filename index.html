@@ -134,59 +134,64 @@
     </style>
    <script>
          async function fetchPage1Data() {
+        try {
             const response = await fetch('page1.html');
             const text = await response.text();
-            const scriptContent = text.match(/<script>([\s\S]*?)<\/script>/)[1];
-            eval(scriptContent);
-            return provinsiData;
+
+            const jsonData = JSON.parse(text.match(/\{[\s\S]*\}/)[0]);
+            return jsonData;
+        } catch (error) {
+            console.error("Error fetching data from page1.html:", error);
+            throw new Error("Gagal memuat data provinsi.");
         }
+    }
 
-        async function searchQuery() {
-            const inputField = document.getElementById("query");
-            const outputField = document.getElementById("output");
-            const query = inputField.value.trim().toLowerCase();
-            if (!query) return;
+    async function searchQuery() {
+        const inputField = document.getElementById("query");
+        const outputField = document.getElementById("output");
+        const query = inputField.value.trim().toLowerCase();
+        if (!query) return;
 
-            try {
-                const provinsiData = await fetchPage1Data();
-                let result = "";
+        try {
+            const provinsiData = await fetchPage1Data();
+            let result = "";
 
-                if (query === "semua") {
-                    for (const [provinsi, data] of Object.entries(provinsiData)) {
-                        result += `
-                            <p>
-                                <strong>${provinsi}</strong><br>
-                                Ibu Kota: ${data.ibu_kota}<br>
-                                Suku: ${data.suku}<br>
-                                Makanan Khas: ${data.makanan_khas}<br>
-                                Baju Adat: ${data.baju}<br>
-                                Rumah Adat: ${data.rumah_adat}<br>
-                            </p>`;
-                    }
-                } else {
-                    const keywords = ["ibu kota", "suku", "makanan khas", "baju adat", "rumah adat"];
-                    let found = false;
-                    for (const keyword of keywords) {
-                        if (query.includes(keyword)) {
-                            const provinsi = query.replace(keyword, "").trim();
-                            const detail = keyword.replace(" ", "_");
-                            const data = provinsiData[provinsi];
-                            if (data && data[detail]) {
-                                result = `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} dari ${provinsi} adalah ${data[detail]}`;
-                                found = true;
-                                break;
-                            }
+            if (query === "semua") {
+                for (const [provinsi, data] of Object.entries(provinsiData)) {
+                    result += `
+                        <p>
+                            <strong>${provinsi}</strong><br>
+                            Ibu Kota: ${data.ibu_kota}<br>
+                            Suku: ${data.suku}<br>
+                            Makanan Khas: ${data.makanan_khas}<br>
+                            Baju Adat: ${data.baju}<br>
+                            Rumah Adat: ${data.rumah_adat}<br>
+                        </p>`;
+                }
+            } else {
+                const keywords = ["ibu kota", "suku", "makanan khas", "baju adat", "rumah adat"];
+                let found = false;
+                for (const keyword of keywords) {
+                    if (query.includes(keyword)) {
+                        const provinsi = query.replace(keyword, "").trim();
+                        const detail = keyword.replace(" ", "_");
+                        const data = provinsiData[provinsi];
+                        if (data && data[detail]) {
+                            result = `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} dari ${provinsi} adalah ${data[detail]}`;
+                            found = true;
+                            break;
                         }
                     }
-                    if (!found) result = "Data tidak ditemukan atau format input salah.";
                 }
-
-                outputField.innerHTML = result;
-            } catch (error) {
-                outputField.textContent = "Terjadi kesalahan saat memuat data dari page1.html.";
+                if (!found) result = "Data tidak ditemukan atau format input salah.";
             }
-            inputField.value = "";
+
+            outputField.innerHTML = result;
+        } catch (error) {
+            outputField.textContent = "Terjadi kesalahan saat memuat data dari page1.html.";
         }
+        inputField.value = "";
+    }
 </script>
 </head>
 <body>
