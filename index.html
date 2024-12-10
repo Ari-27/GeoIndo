@@ -133,37 +133,23 @@
         }
     </style>
    <script>
-    async function searchQuery() {
-        const inputField = document.getElementById("query");
-        const outputField = document.getElementById("output");
-        const query = inputField.value.trim();
-        if (!query) return;
+     async function searchQuery() {
+            const inputField = document.getElementById("query");
+            const query = inputField.value.trim();
+            if (!query) return;
 
-        window.location.href = `page1.html?query=${encodeURIComponent(query)}`;
-
-        try {
-            const response = await fetch('/search', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: query }),
-            });
-            const data = await response.json();
-            outputField.textContent = data.result;
-        } catch (error) {
-            outputField.textContent = "Terjadi kesalahan saat menghubungi server.";
+            window.location.href = `page1.html?query=${encodeURIComponent(query)}`;
         }
-        inputField.value = "";
-    }
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        const inputField = document.getElementById("query");
-        inputField.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                searchQuery();
-            }
-        });
-    });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputField = document.getElementById("query");
+            inputField.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    searchQuery();
+                }
+            });
+        });;
 </script>
 </head>
 <body>
@@ -174,7 +160,6 @@
         <input type="text" id="query" placeholder="Masukkan pertanyaan atau nama provinsi...">
         <div class="buttons-container">
             <button onclick="searchQuery()">Cari</button>
-            <a href="page1.html" class="page1-button">Ke Halaman Pertama</a>
             <a href="page2.html" class="page2-button">Ke Halaman Kedua</a>
             <a href="page3.html" class="page2-button">Ke Halaman Ketiga</a>
 
