@@ -267,61 +267,72 @@ const provinsiData = {
     }
 }
 
-function getQueryFromURL() {
+ function getQueryFromURL() {
             const params = new URLSearchParams(window.location.search);
             return params.get("query") || "";
         }
 
-        function cariDataProvinsi(provinsi, detail = null) {
-            const data = provinsiData[provinsi];
-            if (!data) return "Provinsi tidak ditemukan.";
-            if (detail) {
-                const detailKey = detail.toLowerCase().replace(/ /g, '_');
-                return data[detailKey]
-                    ? `${detail} dari ${provinsi} adalah ${data[detailKey]}`
-                    : `${detail} tidak ditemukan untuk ${provinsi}`;
-            }
-            return `Detail dari ${provinsi}: ${JSON.stringify(data)}`;
-        }
-
-        function tampilkanSemua() {
-            let result = "<h3>Daftar Semua Provinsi:</h3>";
-            for (const [provinsi, data] of Object.entries(provinsiData)) {
-                result += `
-                    <p>
-                        <strong>${provinsi}</strong><br>
-                        Ibu Kota: ${data.ibu_kota}<br>
-                        Suku: ${data.suku}<br>
-                        Makanan Khas: ${data.makanan_khas}<br>
-                        Baju Adat: ${data.baju}<br>
-                        Rumah Adat: ${data.rumah_adat}<br>
-                    </p>`;
-            }
-            return result;
-        }
-
-        function handleSearch() {
-            const query = document.getElementById("query").value.trim();
+        function cariDataProvinsi(query) {
+            query = query.toLowerCase().trim();
             const resultContainer = document.getElementById("result");
-            resultContainer.innerHTML = "";
 
-            if (query.toLowerCase() === "semua") {
-                resultContainer.innerHTML = tampilkanSemua();
+            // Cek apakah query adalah 'semua'
+            if (query === "semua") {
+                let result = "<h3>Daftar Semua Provinsi:</h3>";
+                for (const [provinsi, data] of Object.entries(provinsiData)) {
+                    result += `
+                        <p>
+                            <strong>${provinsi}</strong><br>
+                            Ibu Kota: ${data.ibu_kota}<br>
+                            Suku: ${data.suku}<br>
+                            Makanan Khas: ${data.makanan_khas}<br>
+                            Baju Adat: ${data.baju}<br>
+                            Rumah Adat: ${data.rumah_adat}<br>
+                        </p>`;
+                }
+                resultContainer.innerHTML = result;
+                return;
+            }
+
+            // Split query menjadi bagian-bagian (field dan provinsi)
+            const [field, ...provinsiArray] = query.split(" ");
+            const provinsi = provinsiArray.join(" ");
+            const provinsiKey = provinsi.charAt(0).toUpperCase() + provinsi.slice(1);
+            const data = provinsiData[provinsiKey];
+
+            // Validasi data
+            if (data) {
+                if (data[field]) {
+                    resultContainer.innerHTML = `<p>${field.charAt(0).toUpperCase() + field.slice(1)} dari ${provinsiKey} adalah ${data[field]}</p>`;
+                } else {
+                    resultContainer.innerHTML = `<p>Detail "${field}" tidak ditemukan untuk ${provinsiKey}.</p>`;
+                }
             } else {
-                const [detail, ...provArray] = query.split(" ");
-                const provinsi = provArray.join(" ").trim();
-                const result = cariDataProvinsi(provinsi, detail);
-                resultContainer.innerHTML = `<p>${result}</p>`;
+                resultContainer.innerHTML = `<p>Provinsi "${provinsiKey}" tidak ditemukan.</p>`;
             }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputField = document.getElementById("query");
             const queryFromURL = getQueryFromURL();
+
             if (queryFromURL) {
-                document.getElementById("query").value = queryFromURL;
-                handleSearch();
+                inputField.value = queryFromURL;
+                cariDataProvinsi(queryFromURL);
             }
+
+            document.getElementById("searchBtn").addEventListener("click", function () {
+                const query = inputField.value.trim();
+                cariDataProvinsi(query);
+            });
         });
     </script>
 </head>
 <body>
+    <h1>Data Provinsi Indonesia</h1>
+    <input type="text" id="query" placeholder="Masukkan query (contoh: 'ibu kota Aceh')" />
+    <button id="searchBtn">Cari</button>
+    <button onclick="window.location.href='index.html'">Kembali ke Halaman Utama</button>
+    <div id="result" style="margin-top: 20px;"></div>
+</body>
+</html>
