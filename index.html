@@ -133,23 +133,60 @@
         }
     </style>
    <script>
-     async function searchQuery() {
-            const inputField = document.getElementById("query");
-            const query = inputField.value.trim();
-            if (!query) return;
-
-            window.location.href = `page1.html?query=${encodeURIComponent(query)}`;
+         async function fetchPage1Data() {
+            const response = await fetch('page1.html');
+            const text = await response.text();
+            const scriptContent = text.match(/<script>([\s\S]*?)<\/script>/)[1];
+            eval(scriptContent);
+            return provinsiData;
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        async function searchQuery() {
             const inputField = document.getElementById("query");
-            inputField.addEventListener("keydown", (event) => {
-                if (event.key === "Enter") {
-                    event.preventDefault();
-                    searchQuery();
+            const outputField = document.getElementById("output");
+            const query = inputField.value.trim().toLowerCase();
+            if (!query) return;
+
+            try {
+                const provinsiData = await fetchPage1Data();
+                let result = "";
+
+                if (query === "semua") {
+                    for (const [provinsi, data] of Object.entries(provinsiData)) {
+                        result += `
+                            <p>
+                                <strong>${provinsi}</strong><br>
+                                Ibu Kota: ${data.ibu_kota}<br>
+                                Suku: ${data.suku}<br>
+                                Makanan Khas: ${data.makanan_khas}<br>
+                                Baju Adat: ${data.baju}<br>
+                                Rumah Adat: ${data.rumah_adat}<br>
+                            </p>`;
+                    }
+                } else {
+                    const keywords = ["ibu kota", "suku", "makanan khas", "baju adat", "rumah adat"];
+                    let found = false;
+                    for (const keyword of keywords) {
+                        if (query.includes(keyword)) {
+                            const provinsi = query.replace(keyword, "").trim();
+                            const detail = keyword.replace(" ", "_");
+                            const data = provinsiData[provinsi];
+                            if (data && data[detail]) {
+                                result = `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} dari ${provinsi} adalah ${data[detail]}`;
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found) result = "Data tidak ditemukan atau format input salah.";
                 }
-            });
-        });;
+
+                outputField.innerHTML = result;
+            } catch (error) {
+                outputField.textContent = "Terjadi kesalahan saat memuat data dari page1.html.";
+            }
+            inputField.value = "";
+        }
 </script>
 </head>
 <body>
