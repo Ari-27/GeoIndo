@@ -133,75 +133,85 @@
         }
     </style>
    <script>
-         async function fetchPage1Data() {
-        try {
-            const response = await fetch('page1.html');
-            const text = await response.text();
+      let provincesData = {};
 
-            const jsonData = JSON.parse(text.match(/\{[\s\S]*\}/)[0]);
-            return jsonData;
-        } catch (error) {
-            console.error("Error fetching data from page1.html:", error);
-            throw new Error("Gagal memuat data provinsi.");
+        async function loadProvincesData() {
+            try {
+                const response = await fetch('page1.html');
+                const text = await response.text();
+                provincesData = JSON.parse(text);
+            } catch (error) {
+                console.error("Gagal memuat data dari page1.html:", error);
+            }
         }
-    }
 
-    async function searchQuery() {
-        const inputField = document.getElementById("query");
-        const outputField = document.getElementById("output");
-        const query = inputField.value.trim().toLowerCase();
-        if (!query) return;
-
-        try {
-            const provinsiData = await fetchPage1Data();
-            let result = "";
+        function handleSearch() {
+            const query = document.getElementById("query").value.trim().toLowerCase();
+            const resultContainer = document.getElementById("result");
+            resultContainer.innerHTML = "";
 
             if (query === "semua") {
-                for (const [provinsi, data] of Object.entries(provinsiData)) {
-                    result += `
-                        <p>
-                            <strong>${provinsi}</strong><br>
-                            Ibu Kota: ${data.ibu_kota}<br>
-                            Suku: ${data.suku}<br>
-                            Makanan Khas: ${data.makanan_khas}<br>
-                            Baju Adat: ${data.baju}<br>
-                            Rumah Adat: ${data.rumah_adat}<br>
-                        </p>`;
-                }
+                resultContainer.innerHTML = tampilkanSemua();
+            } else if (query.includes("ibu kota")) {
+                const provinsi = query.replace("ibu kota", "").trim();
+                const result = cariDataProvinsi(provinsi, "capital");
+                resultContainer.innerHTML = `<p>${result}</p>`;
+            } else if (query.includes("suku")) {
+                const provinsi = query.replace("suku", "").trim();
+                const result = cariDataProvinsi(provinsi, "ethnicity");
+                resultContainer.innerHTML = `<p>${result}</p>`;
+            } else if (query.includes("makanan khas")) {
+                const provinsi = query.replace("makanan khas", "").trim();
+                const result = cariDataProvinsi(provinsi, "food");
+                resultContainer.innerHTML = `<p>${result}</p>`;
+            } else if (query.includes("baju adat")) {
+                const provinsi = query.replace("baju adat", "").trim();
+                const result = cariDataProvinsi(provinsi, "traditionalClothes");
+                resultContainer.innerHTML = `<p>${result}</p>`;
+            } else if (query.includes("rumah adat")) {
+                const provinsi = query.replace("rumah adat", "").trim();
+                const result = cariDataProvinsi(provinsi, "customHome");
+                resultContainer.innerHTML = `<p>${result}</p>`;
             } else {
-                const keywords = ["ibu kota", "suku", "makanan khas", "baju adat", "rumah adat"];
-                let found = false;
-                for (const keyword of keywords) {
-                    if (query.includes(keyword)) {
-                        const provinsi = query.replace(keyword, "").trim();
-                        const detail = keyword.replace(" ", "_");
-                        const data = provinsiData[provinsi];
-                        if (data && data[detail]) {
-                            result = `${keyword.charAt(0).toUpperCase() + keyword.slice(1)} dari ${provinsi} adalah ${data[detail]}`;
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                if (!found) result = "Data tidak ditemukan atau format input salah.";
+                resultContainer.innerHTML = `<p>Format input tidak dikenali atau data tidak ditemukan.</p>`;
             }
-
-            outputField.innerHTML = result;
-        } catch (error) {
-            outputField.textContent = "Terjadi kesalahan saat memuat data dari page1.html.";
         }
-        inputField.value = "";
-    }
+
+        function tampilkanSemua() {
+            return Object.entries(provincesData)
+                .map(([provinsi, data]) => `
+                    <p>
+                        <strong>${provinsi}</strong><br>
+                        Ibu Kota: ${data.capital}<br>
+                        Suku: ${data.ethnicity}<br>
+                        Makanan Khas: ${data.food}<br>
+                        Baju Adat: ${data.traditionalClothes}<br>
+                        Rumah Adat: ${data.customHome}<br>
+                    </p>
+                `)
+                .join("");
+        }
+
+        function cariDataProvinsi(provinsi, tipeData) {
+            const data = provincesData[provinsi];
+            if (data && data[tipeData]) {
+                return `${tipeData.charAt(0).toUpperCase() + tipeData.slice(1)}: ${data[tipeData]}`;
+            } else {
+                return `Data untuk ${tipeData} di provinsi ${provinsi} tidak ditemukan.`;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadProvincesData)
 </script>
 </head>
 <body>
     <div class="header">
         <h1>GeoINDO - Informasi Provinsi Indonesia</h1>
     </div>
-    <div class="container">
+   <div class="container">
         <input type="text" id="query" placeholder="Masukkan pertanyaan atau nama provinsi...">
-        <div class="buttons-container">
-            <button onclick="searchQuery()">Cari</button>
+        <button onclick="handleSearch()">Cari</button>
+        <div id="result"></div>
             <a href="page2.html" class="page2-button">Ke Halaman Kedua</a>
             <a href="page3.html" class="page2-button">Ke Halaman Ketiga</a>
 
