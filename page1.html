@@ -273,13 +273,13 @@ function getQueryFromURL() {
         }
 
         function cariDataProvinsi(provinsi, detail = null) {
-            const data = provinsiData[provinsi.toLowerCase()];
+            const data = provinsiData[provinsi];
             if (!data) return "Provinsi tidak ditemukan.";
             if (detail) {
-                const lowerDetail = detail.toLowerCase();
-                return data[lowerDetail]
-                    ? `${detail.charAt(0).toUpperCase() + detail.slice(1)} dari ${provinsi} adalah ${data[lowerDetail]}`
-                    : `${detail.charAt(0).toUpperCase() + detail.slice(1)} tidak ditemukan untuk ${provinsi}`;
+                const detailKey = detail.toLowerCase().replace(/ /g, '_');
+                return data[detailKey]
+                    ? `${detail} dari ${provinsi} adalah ${data[detailKey]}`
+                    : `${detail} tidak ditemukan untuk ${provinsi}`;
             }
             return `Detail dari ${provinsi}: ${JSON.stringify(data)}`;
         }
@@ -289,7 +289,7 @@ function getQueryFromURL() {
             for (const [provinsi, data] of Object.entries(provinsiData)) {
                 result += `
                     <p>
-                        <strong>${provinsi.charAt(0).toUpperCase() + provinsi.slice(1)}</strong><br>
+                        <strong>${provinsi}</strong><br>
                         Ibu Kota: ${data.ibu_kota}<br>
                         Suku: ${data.suku}<br>
                         Makanan Khas: ${data.makanan_khas}<br>
@@ -301,34 +301,17 @@ function getQueryFromURL() {
         }
 
         function handleSearch() {
-            const query = document.getElementById("query").value.trim().toLowerCase();
+            const query = document.getElementById("query").value.trim();
             const resultContainer = document.getElementById("result");
             resultContainer.innerHTML = "";
 
-            if (query === "semua") {
+            if (query.toLowerCase() === "semua") {
                 resultContainer.innerHTML = tampilkanSemua();
-            } else if (query.includes("ibu kota")) {
-                const provinsi = query.replace("ibu kota", "").trim();
-                const result = cariDataProvinsi(provinsi, "ibu_kota");
-                resultContainer.innerHTML = `<p>${result}</p>`;
-            } else if (query.includes("suku")) {
-                const provinsi = query.replace("suku", "").trim();
-                const result = cariDataProvinsi(provinsi, "suku");
-                resultContainer.innerHTML = `<p>${result}</p>`;
-            } else if (query.includes("makanan khas")) {
-                const provinsi = query.replace("makanan khas", "").trim();
-                const result = cariDataProvinsi(provinsi, "makanan_khas");
-                resultContainer.innerHTML = `<p>${result}</p>`;
-            } else if (query.includes("baju adat")) {
-                const provinsi = query.replace("baju adat", "").trim();
-                const result = cariDataProvinsi(provinsi, "baju");
-                resultContainer.innerHTML = `<p>${result}</p>`;
-            } else if (query.includes("rumah adat")) {
-                const provinsi = query.replace("rumah adat", "").trim();
-                const result = cariDataProvinsi(provinsi, "rumah_adat");
-                resultContainer.innerHTML = `<p>${result}</p>`;
             } else {
-                resultContainer.innerHTML = `<p>Format input tidak dikenali atau data tidak ditemukan.</p>`;
+                const [detail, ...provArray] = query.split(" ");
+                const provinsi = provArray.join(" ").trim();
+                const result = cariDataProvinsi(provinsi, detail);
+                resultContainer.innerHTML = `<p>${result}</p>`;
             }
         }
 
@@ -342,16 +325,3 @@ function getQueryFromURL() {
     </script>
 </head>
 <body>
-    <h1>Data Provinsi Indonesia</h1>
-    <input type="text" id="query" placeholder="Masukkan query (contoh: 'ibu kota Aceh')" />
-    <button onclick="handleSearch()">Cari</button>
-    <button onclick="window.location.href='index.html'">Kembali ke Halaman Utama</button>
-    <button onclick="window.location.href='page2.html'">Halaman 2</button>
-    <button onclick="window.location.href='page3.html'">Halaman 3</button>
-    <div id="result" style="margin-top: 20px;"></div>
-</body>
-</html>
-
-
-
-
