@@ -284,61 +284,6 @@
     "customHome": "Rumah Honai"
   }
 };
- function handleSearch() {
-            const query = document.getElementById("query").value.trim().toLowerCase();
-            const resultContainer = document.getElementById("result");
-            resultContainer.innerHTML = "";
-
-            if (query === "semua") {
-                resultContainer.innerHTML = tampilkanSemua();
-            } else if (query.includes("ibu kota")) {
-                const provinsi = query.replace("ibu kota", "").trim();
-                const result = cariDataProvinsi(provinsi, "ibu_kota");
-                resultContainer.innerHTML = `<p>${result}</p>`;
-            } else if (query.includes("suku")) {
-                const provinsi = query.replace("suku", "").trim();
-                const result = cariDataProvinsi(provinsi, "suku");
-                resultContainer.innerHTML = `<p>${result}</p>`;
-            } else if (query.includes("makanan khas")) {
-                const provinsi = query.replace("makanan khas", "").trim();
-                const result = cariDataProvinsi(provinsi, "makanan_khas");
-                resultContainer.innerHTML = `<p>${result}</p>`;
-            } else if (query.includes("baju adat")) {
-                const provinsi = query.replace("baju adat", "").trim();
-                const result = cariDataProvinsi(provinsi, "baju");
-                resultContainer.innerHTML = `<p>${result}</p>`;
-            } else if (query.includes("rumah adat")) {
-                const provinsi = query.replace("rumah adat", "").trim();
-                const result = cariDataProvinsi(provinsi, "rumah_adat");
-                resultContainer.innerHTML = `<p>${result}</p>`;
-            } else {
-                resultContainer.innerHTML = `<p>Format input tidak dikenali atau data tidak ditemukan.</p>`;
-            }
-        }
-
-        // Fungsi untuk mengambil query dari URL jika ada (opsional)
-        document.addEventListener("DOMContentLoaded", () => {
-            const queryFromURL = getQueryFromURL();
-            if (queryFromURL) {
-                document.getElementById("query").value = queryFromURL;
-                handleSearch();
-            }
-        });
-
-        // Contoh fungsi tambahan (definisikan sesuai kebutuhan)
-        function getQueryFromURL() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get("query");
-        }
-
-        function tampilkanSemua() {
-            return `<p>Semua data provinsi ditampilkan (fungsi tampilkanSemua perlu implementasi).</p>`;
-        }
-
-        function cariDataProvinsi(provinsi, tipeData) {
-            // Contoh: Pencarian dummy, ubah sesuai kebutuhan
-            return `Hasil pencarian untuk ${tipeData} dari provinsi ${provinsi}`;
-        }>
        document.write(JSON.stringify(provinces));
     </script>
 </body>
