@@ -5,33 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeoINDO - Informasi Provinsi Indonesia</title>
     <style>
-    body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-image: url("https://karinov.co.id/wp-content/uploads/2020/02/Gambar-Peta-Indonesia-Lengkap-Official.jpg"); /* Path file gambar */
-    background-size: cover; /* Menyesuaikan ukuran gambar dengan layar */
-    background-repeat: no-repeat; /* Menghindari pengulangan gambar */
-    background-attachment: fixed; /* Membuat latar belakang tetap saat halaman di-scroll */
-    background-position: center; /* Memusatkan gambar peta */
-    background-color: #eaf6ff; /* Warna latar belakang cadangan */
-    color: var(--text-color) /* Warna teks default */
-    animation: fadeIn 2s ease-out; /* Animasi transisi masuk */
-}
-
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("https://karinov.co.id/wp-content/uploads/2020/02/Gambar-Peta-Indonesia-Lengkap-Official.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            animation: fadeIn 2s ease-out;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.5s, color 0.5s;
         }
-
-
     
-        .header { 
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    
+        .header {
             background-color: rgba(52, 152, 219, 0.8); 
             color: white;
             padding: 80px;
@@ -61,7 +54,6 @@
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-    
     
         input[type="text"] {
             width: 60%;
