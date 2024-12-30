@@ -38,6 +38,39 @@
       to { opacity: 1; }
     }
 
+   .header {
+        width: 100%;
+        background-color: #4A90E2; /* Warna biru seperti pada gambar */
+        padding: 60px 0;
+        text-align: center;
+        color: white;
+        font-size: 30px;
+        font-weight: bold;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+  }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-image: url("https://karinov.co.id/wp-content/uploads/2020/02/Gambar-Peta-Indonesia-Lengkap-Official.jpg"); /* Path file gambar */
+      background-size: cover; /* Menyesuaikan ukuran gambar dengan layar */
+      background-repeat: no-repeat; /* Menghindari pengulangan gambar */
+      background-attachment: fixed; /* Membuat latar belakang tetap saat halaman di-scroll */
+      background-position: center; 
+      background-color: #d1def8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     h1 {
       color: #2c3e50;
       text-align: center;
@@ -60,6 +93,7 @@
       max-width: 1200px;
     }
 
+
     .input-container, .output-container {
       width: 100%;
       max-width: 500px;
@@ -69,7 +103,7 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    .input-container div {
+     .input-container div {
       display: flex;
       justify-content: center;
       gap: 10px;
